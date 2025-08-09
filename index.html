@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تحليل الأحكام القضائية</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f7f9;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            width: 100%;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            font-size: 2.8em;
+            font-weight: bold;
+            color: #1a1a1a;
+            margin-bottom: 5px;
+        }
+        .credit {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .x-link {
+            color: #1da1f2;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s;
+        }
+        .x-link:hover {
+            color: #0d8ccb;
+            text-decoration: underline;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        input[type="file"] {
+            display: block;
+            margin: 15px auto 25px;
+            width: 100%;
+            border: 2px dashed #ccc;
+            padding: 15px;
+            border-radius: 8px;
+            background-color: #fafafa;
+            cursor: pointer;
+            text-align: center;
+        }
+        input[type="file"]::file-selector-button {
+            display: none;
+        }
+        input[type="file"]::-webkit-file-upload-button {
+            visibility: hidden;
+        }
+        input[type="file"]::before {
+            content: 'اسحب وأفلت ملف PDF هنا أو انقر للاختيار';
+            display: inline-block;
+            background: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        input[type="file"]:hover::before {
+            background-color: #0056b3;
+        }
+        textarea {
+            width: 100%;
+            height: 120px;
+            margin-top: 5px;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 1em;
+            line-height: 1.5;
+            box-sizing: border-box;
+            background-color: #f9f9f9;
+        }
+        .button-group {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        label {
+            font-weight: bold;
+            display: block;
+            text-align: right;
+            margin-bottom: 5px;
+            color: #444;
+        }
+        .loading, .error, .progress {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            display: none;
+        }
+        .loading {
+            color: #007bff;
+        }
+        .error {
+            color: #d9534f;
+            background-color: #f2dede;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ebccd1;
+        }
+        .progress {
+            width: 100%;
+            height: 25px;
+            background: #e9ecef;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #007bff;
+            width: 0;
+            transition: width 0.4s ease-in-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 2em;
+            }
+            .credit {
+                font-size: 0.9em;
+            }
+            .button-group {
+                justify-content: center;
+            }
+            button {
+                width: 100%;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>تحليل الأحكام القضائية</h1>
+        <p class="credit">تم عمل هذا النموذج بواسطة عبدالله القويفلي | <a class="x-link" href="https://x.com/tmemy" target="_blank">@tmemy</a></p>
+        
+        <input type="file" id="pdfUpload" accept=".pdf">
+        
+        <div class="progress" id="progress">
+            <div class="progress-bar" id="progressBar">0%</div>
+        </div>
+        
+        <p class="loading" id="loading">جارٍ التحليل...</p>
+        <p class="error" id="error"></p>
+        
+        <div class="form-group">
+            <label for="facts">الوقائع:</label>
+            <textarea id="facts" readonly></textarea>
+            <div class="button-group">
+                <button onclick="copyText('facts')">نسخ</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="reasons">الأسباب:</label>
+            <textarea id="reasons" readonly></textarea>
+            <div class="button-group">
+                <button onclick="copyText('reasons')">نسخ</button>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="legalOpinion">الرأي القانوني:</label>
+            <textarea id="legalOpinion" readonly></textarea>
+            <div class="button-group">
+                <button onclick="copyText('legalOpinion')">نسخ</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.10.377/pdf.worker.min.js';
+
+        const pdfUpload = document.getElementById('pdfUpload');
+        const progressBar = document.getElementById('progressBar');
+        const progressContainer = document.getElementById('progress');
+        const loadingMessage = document.getElementById('loading');
+        const errorMessage = document.getElementById('error');
+
+        pdfUpload.addEventListener('change', async function(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            resetUI();
+            
+            if (file.type !== 'application/pdf') {
+                showError('يرجى اختيار ملف PDF صالح.');
+                return;
+            }
+
+            loadingMessage.style.display = 'block';
+            progressContainer.style.display = 'block';
+            
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const typedArray = new Uint8Array(e.target.result);
+                    const pdf = await pdfjsLib.getDocument(typedArray).promise;
+                    let text = '';
+                    const totalPages = pdf.numPages;
+
+                    for (let i = 1; i <= totalPages; i++) {
+                        updateProgress((i / totalPages) * 50, 'جارٍ استخراج النصوص...');
+                        const page = await pdf.getPage(i);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        text += pageText + '\n';
+                    }
+
+                    updateProgress(50, 'تم استخراج النصوص. جارٍ التحليل...');
+                    
+                    // استدعاء دالة التحليل
+                    const analysis = await analyzeTextWithHuggingFace(text);
+
+                    // عرض النتائج
+                    document.getElementById('facts').value = analysis.facts || 'لم يتم العثور على وقائع';
+                    document.getElementById('reasons').value = analysis.reasons || 'لم يتم العثور على أسباب';
+                    document.getElementById('legalOpinion').value = analysis.legalOpinion || 'لم يتم العثور على رأي قانوني';
+                    
+                    updateProgress(100, 'اكتمل التحليل!');
+
+                } catch (error) {
+                    console.error('An error occurred:', error);
+                    showError('حدث خطأ أثناء معالجة الملف أو الاتصال بـ API: ' + error.message);
+                } finally {
+                    loadingMessage.style.display = 'none';
+                    //progressContainer.style.display = 'none'; // يمكن إبقائه لإظهار 100%
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        });
+
+        async function analyzeTextWithHuggingFace(text) {
+            // ملاحظة: نموذج aubmindlab/bert-base-arabertv2 هو نموذج للغة وليس نموذجًا مصممًا خصيصًا لاستخراج المعلومات بتنسيق JSON.
+            // لذلك، قد لا تعمل هذه الجزئية بالشكل المطلوب. يفضل استخدام نموذج متخصص في استخراج المعلومات (NER) أو نماذج حديثة مثل GPT.
+            const API_KEY = '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';
+            const API_URL = 'https://api-inference.huggingface.co/models/aubmindlab/bert-base-arabertv2';
+
+            const prompt = `
+                حلل الوثيقة القانونية التالية واستخرج منها:
+                - الوقائع: ملخص للأحداث الرئيسية، الأطراف، والتواريخ.
+                - الأسباب: المبررات القانونية أو الأسانيد التي اعتمد عليها الحكم.
+                - الرأي القانوني: الاستنتاج أو خلاصة الحكم.
+                أجب بتنسيق JSON.
+                النص: ${text}
+            `;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_KEY}`
+                    },
+                    body: JSON.stringify({
+                        inputs: prompt,
+                        parameters: { max_length: 500, temperature: 0.7 } // تم تقليل max_length لتجنب الأخطاء
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`فشل الاتصال بـ Hugging Face API: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                
+                // قد يكون الرد نصًا وليس JSON، لذا يجب التعامل مع هذا الاحتمال
+                const generatedText = data[0]?.generated_text || '';
+
+                try {
+                    // محاولة تحليل النص كـ JSON
+                    return JSON.parse(generatedText.trim());
+                } catch (e) {
+                    console.warn("API response was not a valid JSON. Attempting to parse manually.");
+                    // في حال فشل التحليل، يمكن محاولة استخراج المعلومات يدويًا أو إرجاع النص كما هو
+                    return {
+                        facts: generatedText.includes('"الوقائع":') ? generatedText.split('"الوقائع":')[1].split('"الأسباب":')[0].replace(/['",}]/g, '').trim() : generatedText.slice(0, 200),
+                        reasons: generatedText.includes('"الأسباب":') ? generatedText.split('"الأسباب":')[1].split('"الرأي القانوني":')[0].replace(/['",}]/g, '').trim() : 'لم يتم العثور على أسباب',
+                        legalOpinion: generatedText.includes('"الرأي القانوني":') ? generatedText.split('"الرأي القانوني":')[1].replace(/['",}]/g, '').trim() : 'لم يتم العثور على رأي قانوني'
+                    };
+                }
+            } catch (error) {
+                console.error('Error analyzing text:', error);
+                throw error;
+            }
+        }
+        
+        function updateProgress(percent, message = '') {
+            progressBar.style.width = `${percent}%`;
+            progressBar.textContent = `${Math.round(percent)}% ${message}`;
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            loadingMessage.style.display = 'none';
+            progressContainer.style.display = 'none';
+        }
+
+        function resetUI() {
+            errorMessage.style.display = 'none';
+            loadingMessage.style.display = 'none';
+            progressContainer.style.display = 'none';
+            progressBar.style.width = '0%';
+            progressBar.textContent = '0%';
+            document.getElementById('facts').value = '';
+            document.getElementById('reasons').value = '';
+            document.getElementById('legalOpinion').value = '';
+        }
+        
+        function copyText(elementId) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            textarea.setSelectionRange(0, 99999); // For mobile devices
+            try {
+                navigator.clipboard.writeText(textarea.value);
+                alert('تم نسخ النص!');
+            } catch (err) {
+                document.execCommand('copy');
+                alert('تم نسخ النص بالطريقة التقليدية!');
+            }
+        }
+    </script>
+</body>
+</html>
